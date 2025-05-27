@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Upload Image</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <style>
+    body {
+      background-color: #f8f9fa;
+      padding-top: 80px;
+    }
+    .container {
+      max-width: 500px;
+      background: white;
+      padding: 30px;
+      border-radius: 12px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+    }
+    .logo {
+      display: flex;
+      justify-content: center;
+      margin-bottom: 10px;
+    }
+    .logo img {
+      width: 80px;
+      height: 80px;
+    }
+    #error-msg {
+      display: none;
+    }
+    #preview {
+      display: none;
+      margin-top: 15px;
+      text-align: center;
+    }
+    #preview img {
+      max-width: 100%;
+      max-height: 300px;
+      border-radius: 8px;
+      border: 1px solid #ccc;
+    }
+  </style>
+</head>
+<body>
+
+<div class="container">
+  <div class="logo">
+    <img src="{{ url_for('static', filename='logo.jpg') }}" alt="Logo">
+  </div>
+  <h2 class="text-center">Image Classification</h2>
+
+  <form method="POST" enctype="multipart/form-data" onsubmit="return validateFile()">
+    <div class="mb-3">
+      <input type="file" name="image" class="form-control" id="imageInput" accept="image/*" required onchange="previewImage()">
+    </div>
+    <div id="error-msg" class="alert alert-danger" role="alert">
+      Only .jpg, .jpeg, .png, .bmp, .gif, or .webp files are accepted.
+    </div>
+
+    <div id="preview">
+      <p>Preview:</p>
+      <img id="preview-img" src="#" alt="Image Preview">
+    </div>
+
+    <div class="d-grid mt-3">
+      <button type="submit" class="btn btn-primary">Upload</button>
+    </div>
+  </form>
+</div>
+
+<script>
+  function validateFile() {
+    const fileInput = document.getElementById("imageInput");
+    const filePath = fileInput.value;
+    const allowedExtensions = /(\.jpg|\.jpeg|\.png|\.bmp|\.gif|\.webp)$/i;
+    const errorMsg = document.getElementById("error-msg");
+
+    if (!allowedExtensions.exec(filePath)) {
+      errorMsg.style.display = "block";
+      document.getElementById("preview").style.display = "none";
+      return false;
+    } else {
+      errorMsg.style.display = "none";
+      return true;
+    }
+  }
+
+  function previewImage() {
+    const input = document.getElementById("imageInput");
+    const preview = document.getElementById("preview");
+    const previewImg = document.getElementById("preview-img");
+
+    const file = input.files[0];
+    if (file) {
+      const reader = new FileReader();
+
+      reader.onload = function(e) {
+        previewImg.src = e.target.result;
+        preview.style.display = "block";
+      }
+
+      reader.readAsDataURL(file);
+    }
+  }
+</script>
+
+</body>
+</html>

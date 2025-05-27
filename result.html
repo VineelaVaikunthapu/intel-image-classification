@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Classification Result</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      padding: 30px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    .container {
+      display: flex;
+      flex-direction: row;
+      justify-content: center;
+      align-items: flex-start;
+      gap: 50px;
+      margin-top: 20px;
+      flex-wrap: wrap;
+    }
+    .image-preview img {
+      max-width: 400px;
+      height: auto;
+      border-radius: 12px;
+      border: 1px solid #ccc;
+    }
+    canvas {
+      max-width: 600px;
+      height: 400px;
+    }
+    h1, h2 {
+      text-align: center;
+    }
+    a {
+      display: block;
+      margin-top: 30px;
+      font-size: 16px;
+    }
+  </style>
+</head>
+<body>
+  <h1>Image Classification Result</h1>
+  <h2>{{ result_sentence }}</h2>
+
+  <div class="container">
+    <div class="image-preview">
+      <img src="{{ image }}" alt="Uploaded Image">
+    </div>
+    <div class="chart-container">
+      <canvas id="confidenceChart"></canvas>
+    </div>
+  </div>
+
+  <script>
+    const labels = {{ confidences.keys()|list|tojson }};
+    const data = {{ confidences.values()|list|tojson }};
+
+    const ctx = document.getElementById('confidenceChart').getContext('2d');
+    new Chart(ctx, {
+      type: 'bar',
+      data: {
+        labels: labels,
+        datasets: [{
+          label: 'Prediction Confidence',
+          data: data,
+          backgroundColor: 'rgba(75, 192, 192, 0.6)',
+          borderColor: 'rgba(75, 192, 192, 1)',
+          borderWidth: 1
+        }]
+      },
+      options: {
+        indexAxis: 'y',  // Horizontal bars
+        scales: {
+          x: {
+            beginAtZero: true,
+            max: 1
+          }
+        },
+        plugins: {
+          legend: {
+            display: false
+          }
+        }
+      }
+    });
+  </script>
+
+  <a href="/">Try Another Image</a>
+</body>
+</html>
